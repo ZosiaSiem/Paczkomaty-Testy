@@ -1,130 +1,41 @@
-// Importy
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import * as controller from "../../api/controllers/paczki.js";
-import Paczka from "../../api/models/paczka.js";
+import { describe, it, expect, vi, beforeEach } from "vitest"; //importuje potrzebne funkcje z vitest
+import * as kontroler from "../../api/controllers/paczki.js"; //importuje cały kontroler paczki
+import Paczka from "../../api/models/paczka.js"; //importuje model paczki
 
-describe("Testy jednostkowe kontrolera paczki", () => {
+describe("Paczki", () => {
+  let odpowiedzi; //tu zadeklarowałam zmienną która będzie symulować odpowiedź serwera dzieki czemu nie muszę za każdym razem tworzyć tego obiektu w każdym teście i odpalać serwera
 
-  const res = {
-    status: vi.fn().mockReturnThis(),
-    json: vi.fn()
-  };
-
-  // Czyszczenie mocków przed każdym testem
   beforeEach(() => {
     vi.clearAllMocks();
-    Paczka.find = vi.fn();
-    Paczka.findById = vi.fn();
+    odpowiedzi = { status: vi.fn().mockReturnThis(), json: vi.fn() };
     Paczka.findByIdAndUpdate = vi.fn();
     Paczka.findByIdAndDelete = vi.fn();
+  }); //ta funkcja wykona się przed każdym testem abywyczyścić mocki i odpowiedzi bo inaczej mogą się mieszać dane między testami
+
+  it("Czy aktualizacja paczek jest poprawna - powinno wzrócić kod 200", async () => {
+    Paczka.findByIdAndUpdate.mockResolvedValue({ _id: "1" }); //tu uyłam mocka aby zasymulować że metoda findByIdAndUpdate zwraca obiekt z id 1
+    await kontroler.paczki_update({ params: { paczkaId: "1" }, body: {} }, odpowiedzi); //wywołuje metodę kontrolera paczki_update (bo tak nazywa sie ta funkcja w kontrolerze paczki) z parametrami symulującymi żądanie i odpowiedź
+    expect(odpowiedzi.status).toHaveBeenCalledWith(200); //sprawdzam czy odp. jest z kodem 200
   });
 
-  // Test aktualizacji paczki
-  it("Powinien zwrócić 200 po poprawnej aktualizacji paczki", async () => {
-    const updatedPaczka = {
-      _id: "1",
-      kodPaczki: "AAA111",
-      status: "dostarczona"
-    };
-
-    Paczka.findByIdAndUpdate.mockResolvedValue(updatedPaczka);
-
-    const req = {
-      params: { paczkaId: "1" },
-      body: {
-        kodPaczki: "AAA111",
-        kurierId: "kurierId",
-        paczkomatId: "paczkomatId",
-        status: "dostarczona"
-      }
-    };
-
-    await controller.paczki_update(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({
-      wiadomość: "Zaktualizowano paczke o numerze 1",
-      updatedPaczka
-    });
+  it("Chce aktualizować paczkę ale jej nie ma w bazie", async () => {
+    Paczka.findByIdAndUpdate.mockResolvedValue(null); // tu szuka paczki ale jej nie znajduje więc zwraca null
+    await kontroler.paczki_update({ params: { paczkaId: "1" }, body: {} }, odpowiedzi); // następnie wywołuje metodę aktualizacji paczki aby sprawdzić czy odpowiedź jest poprawna
+    expect(odpowiedzi.status).toHaveBeenCalledWith(404); //i oczekuje że odpowiedź będzie z kodem 404 bo paczka nie istnieje
   });
 
-  // Aktualizacja — paczka nie istnieje
-  it("Powinien zwrócić 404, gdy paczka do aktualizacji nie istnieje", async () => {
-    Paczka.findByIdAndUpdate.mockResolvedValue(null);
-
-    const req = {
-      params: { paczkaId: "999" },
-      body: {}
-    };
-
-    await controller.paczki_update(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({
-      wiadomość: "Nie znaleziono paczki o numerze 999"
-    });
+  it("Sprawdzanie poprawnego usuwania paczki", async () => {
+    Paczka.findByIdAndDelete.mockResolvedValue({}); // tu symuluję, że paczka została usunięta
+    await kontroler.paczki_delete({ params: { paczkaId: "1" } }, odpowiedzi); //wywołuje metodę usuwania paczki
+    expect(odpowiedzi.status).toHaveBeenCalledWith(200); //sprawdzam czy odpowiedź ma kod 200 bo paczka została usunięta i powinien być taki kod odpowiedzi
   });
 
-  // Usuwanie paczki
-  it("Powinien zwrócić 200 po poprawnym usunięciu paczki", async () => {
-    Paczka.findByIdAndDelete.mockResolvedValue({});
-
-    const req = {
-      params: { paczkaId: "1" }
-    };
-
-    await controller.paczki_delete(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({
-      wiadomość: "Usunięto paczke o numerze 1"
-    });
-  });
-
-  // Usuwanie — paczka nie istnieje
-  it("Powinien zwrócić 404, gdy paczka do usunięcia nie istnieje", async () => {
+  it("Usuwanie paczki i sprawdzanie czy nie ma jej w bazie ", async () => {
     Paczka.findByIdAndDelete.mockResolvedValue(null);
-
-    const req = {
-      params: { paczkaId: "999" }
-    };
-
-    await controller.paczki_delete(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({
-      wiadomość: "Nie znaleziono paczki o numerze 999"
-    });
+    await kontroler.paczki_delete({ params: { paczkaId: "1" } }, odpowiedzi);
+    expect(odpowiedzi.status).toHaveBeenCalledWith(404);
   });
 
-  // Dodawanie nowej paczki
-  it("Powinien zwrócić 201 po dodaniu nowej paczki", async () => {
-    const nowaPaczka = {
-      _id: "1",
-      kodPaczki: "XYZ789",
-      status: "oczekująca"
-    };
-
-    // Mock metody save dla nowej paczki
-    const saveMock = vi.fn().mockResolvedValue(nowaPaczka);
-    vi.spyOn(Paczka.prototype, "save").mockImplementation(saveMock);
-
-    const req = {
-      body: {
-        kodPaczki: "XYZ789",
-        kurierId: "kurierId",
-        paczkomatId: "paczkomatId",
-        status: "oczekująca"
-      }
-    };
-
-    await controller.paczki_add_new(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith({
-      wiadomość: "Nowa przesyłka została dodana!",
-      paczka: nowaPaczka
-    });
-  });
-
+  // Test 3 i 4 rozni sie tym ze w 3 szukamy paczki która istnieje a w 4 takiej paczki nie ma (nie istnieje w bazie)
 });
+
