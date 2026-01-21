@@ -81,4 +81,3 @@ W projekcie wykorzystano:
 ## Uwagi
 
 * Przed uruchomieniem testów end-to-end należy upewnić się, że backend oraz frontend są uruchomione.
-```
