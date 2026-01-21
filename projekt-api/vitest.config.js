@@ -1,0 +1,15 @@
+const { defineConfig } = require('vitest/config')
+
+module.exports = defineConfig({
+  test: {
+    globals: true,
+    environment: 'node',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html']
+    },
+    testTimeout: 10000,
+    include: ['tests-unit/testyJednostkowe/**/*.test.js'],
+     exclude: ['**/node_modules/**', '**/.git/**'],
+  }
+})
