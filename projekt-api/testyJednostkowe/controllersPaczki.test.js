@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"; //importuje potrzebne funkcje z vitest
-import * as kontroler from "../../api/controllers/paczki.js"; //importuje cały kontroler paczki
-import Paczka from "../../api/models/paczka.js"; //importuje model paczki
+import * as kontroler from "../api/controllers/paczki.js"; //importuje cały kontroler paczki
+import Paczka from "../api/models/paczka.js"; //importuje model paczki
 
 describe("Paczki", () => {
   let odpowiedzi; //tu zadeklarowałam zmienną która będzie symulować odpowiedź serwera dzieki czemu nie muszę za każdym razem tworzyć tego obiektu w każdym teście i odpalać serwera
@@ -10,7 +10,7 @@ describe("Paczki", () => {
     odpowiedzi = { status: vi.fn().mockReturnThis(), json: vi.fn() };
     Paczka.findByIdAndUpdate = vi.fn();
     Paczka.findByIdAndDelete = vi.fn();
-  }); //ta funkcja wykona się przed każdym testem abywyczyścić mocki i odpowiedzi bo inaczej mogą się mieszać dane między testami
+  }); //ta funkcja wykona się przed każdym testem aby wyczyścić mocki i odpowiedzi bo inaczej mogą się mieszać dane między testami
 
   it("Czy aktualizacja paczek jest poprawna - powinno wzrócić kod 200", async () => {
     Paczka.findByIdAndUpdate.mockResolvedValue({ _id: "1" }); //tu uyłam mocka aby zasymulować że metoda findByIdAndUpdate zwraca obiekt z id 1
@@ -36,6 +36,6 @@ describe("Paczki", () => {
     expect(odpowiedzi.status).toHaveBeenCalledWith(404);
   });
 
-  // Test 3 i 4 rozni sie tym ze w 3 szukamy paczki która istnieje a w 4 takiej paczki nie ma (nie istnieje w bazie)
+  // Test 3 i 4 rozni sie tym ze w 3 szukam paczki która istniała a w 4 takiej paczki nie ma (nigdy nie istniała)
 });
 

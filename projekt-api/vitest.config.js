@@ -9,7 +9,7 @@ module.exports = defineConfig({
       reporter: ['text', 'json', 'html']
     },
     testTimeout: 10000,
-    include: ['tests-unit/testyJednostkowe/**/*.test.js'],
+    include: ['testyJednostkowe/**/*.test.js'],
      exclude: ['**/node_modules/**', '**/.git/**'],
   }
 })
