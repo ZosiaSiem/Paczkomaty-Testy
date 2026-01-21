@@ -16,6 +16,15 @@ Do uruchomienia projektu wymagane są:
 ---
 
 ## Uruchamianie projektu
+Nalezy pobrać to repozytorium:
+- git clone https://github.com/ZosiaSiem/Paczkomaty-Testy.git
+## Połączenie z bazą 
+ Naley utworzyć plik .env z następującymi informacjami:
+DB_USER= /twojeImie/
+DB_PASSWORD= /twojeHasło/
+DB_NAME= /nazwaBazyDanych/
+JWT_KEY= /secret/
+Następnie połączyć projekt z bazą
 
 ### Uruchomienie backendu / bazy danych
 
@@ -81,3 +90,4 @@ W projekcie wykorzystano:
 ## Uwagi
 
 * Przed uruchomieniem testów end-to-end należy upewnić się, że backend oraz frontend są uruchomione.
+* Naley połączyć ten projekt z bazą danych (u mnie MongoDB)
