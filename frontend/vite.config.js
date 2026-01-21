@@ -1,15 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-        rewrite: path => path.replace(/^\/api/, ''),
+        target: 'http://localhost:3000', //przekierowanie zapytań API do backendu
+        changeOrigin: true, //udaje ze zadanie pochodzi bezpośrednio z backendu
+        rewrite: path => path.replace(/^\/api/, ''), //usuwanie /api z początku ścieżki przed wysłaniem zadania do backendu
       },
     },
   },

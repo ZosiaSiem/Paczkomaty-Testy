@@ -55,8 +55,9 @@ Po uruchomieniu aplikacja będzie dostępna lokalnie (domyślnie pod adresem `ht
 ### Uruchamianie testów jednostkowych
 
 Testy jednostkowe znajdują się w części backendowej projektu.
-Aby je uruchomić, należy przejść do katalogu backendu i wykonać polecenie:
-
+Upewnij się, że Vitest jest zainstalowany:
+npm install -D vitest
+Następnie aby uruchomić testy, należy przejść do katalogu backendu i wykonać polecenie:
 ```bash
 cd projekt-api
 npm test
@@ -67,6 +68,11 @@ npm test
 ### Uruchamianie testów end-to-end (Playwright)
 
 Testy end-to-end zostały zaimplementowane przy użyciu narzędzia Playwright i znajdują się w części frontendowej projektu.
+Zainstaluj zależności i przeglądarki Playwright:
+```bash
+npm install
+npx playwright install
+```
 Aby uruchomić testy E2E, należy wykonać:
 
 ```bash
